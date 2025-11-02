@@ -1,0 +1,126 @@
+# Core Framework
+fastapi
+uvicorn[standard]
+pydantic
+ 
+# HTTP Client
+requests
+httpx
+ 
+# File Processing
+python-multipart
+aiofiles
+ 
+# AI Integration
+openai
+ 
+# Data Processing
+pandas
+numpy
+jsonschema
+ 
+# Security & Encryption
+cryptography
+bcrypt
+python-jose[cryptography]
+ 
+# Database (Optional - for production)
+sqlalchemy
+alembic
+asyncpg
+ 
+# Caching
+redis
+aioredis
+ 
+# Monitoring & Logging
+structlog
+ 
+# Development & Testing
+pytest
+pytest-asyncio
+pytest-cov
+black
+flake8
+mypy
+isort
+ 
+# Documentation
+mkdocs
+mkdocs-material
+ 
+# Static Analysis & Code Quality
+bandit
+safety
+ 
+# Environment Management
+python-dotenv
+ 
+# Date/Time
+python-dateutil
+ 
+# Regex & Pattern Matching
+regex
+ 
+# Configuration Management
+pyyaml
+ 
+# Background Tasks
+celery
+ 
+# Git Integration (for GitHub repos)
+GitPython
+ 
+# Progress Bars
+tqdm
+ 
+# Performance Monitoring
+psutil
+ 
+# Validation
+email-validator
+phonenumbers
+ 
+# Template Engine (for reports)
+jinja2
+ 
+# CSV/Excel Export
+openpyxl
+xlsxwriter
+ 
+# PDF Generation
+reportlab
+ 
+# Image Processing (for diagrams)
+pillow
+ 
+# Rate Limiting
+slowapi
+ 
+# Metrics Collection
+prometheus-client
+ 
+# Production Server
+gunicorn
+ 
+# Development Tools
+watchdog
+ipython
+ 
+# Additional Utilities
+click
+rich
+typer
+ 
+# Security Scanning
+semgrep
+ 
+# Performance Testing
+locust
+ 
+# Mock Data Generation
+faker
+ 
+# Time Zone Support
+pytz
+ 
