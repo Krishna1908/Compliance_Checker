@@ -1,0 +1,283 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-01-15",
+  "frameworks": {
+    "HIPAA": {
+      "name": "Health Insurance Portability and Accountability Act",
+      "description": "US healthcare data protection regulations",
+      "rules": [
+        {
+          "id": "hipaa_001",
+          "name": "PHI Encryption",
+          "description": "Protected Health Information must be encrypted at rest and in transit",
+          "severity": "critical",
+          "patterns": [
+            {
+              "type": "keyword_search",
+              "pattern": "(?:patient|medical|health|diagnosis|treatment|prescription|medical_record)",
+              "context": "unencrypted"
+            }
+          ],
+          "remediation": "Implement AES-256 encryption for all PHI data"
+        },
+        {
+          "id": "hipaa_002",
+          "name": "Access Controls",
+          "description": "PHI access must be controlled and logged",
+          "severity": "high",
+          "patterns": [
+            {
+              "type": "code_analysis",
+              "pattern": "SELECT.*FROM.*patient|medical|health",
+              "context": "no_authentication"
+            }
+          ],
+          "remediation": "Implement role-based access control (RBAC) and audit logging"
+        },
+        {
+          "id": "hipaa_003",
+          "name": "Data Minimization",
+          "description": "Only collect and store necessary PHI",
+          "severity": "medium",
+          "patterns": [
+            {
+              "type": "data_collection",
+              "pattern": "collect.*all.*data|store.*everything",
+              "context": "excessive_collection"
+            }
+          ],
+          "remediation": "Review data collection practices and implement data minimization"
+        }
+      ]
+    },
+    "GDPR": {
+      "name": "General Data Protection Regulation",
+      "description": "EU data protection and privacy regulations",
+      "rules": [
+        {
+          "id": "gdpr_001",
+          "name": "Consent Management",
+          "description": "User consent must be obtained and managed for data processing",
+          "severity": "critical",
+          "patterns": [
+            {
+              "type": "consent_check",
+              "pattern": "process.*data|collect.*personal",
+              "context": "no_consent"
+            }
+          ],
+          "remediation": "Implement consent management system with granular controls"
+        },
+        {
+          "id": "gdpr_002",
+          "name": "Right to Erasure",
+          "description": "Users have the right to have their data deleted",
+          "severity": "high",
+          "patterns": [
+            {
+              "type": "deletion_check",
+              "pattern": "DELETE.*user.*data|remove.*personal",
+              "context": "permanent_deletion"
+            }
+          ],
+          "remediation": "Implement data deletion functionality and audit trail"
+        },
+        {
+          "id": "gdpr_003",
+          "name": "Data Portability",
+          "description": "Users have the right to export their data",
+          "severity": "medium",
+          "patterns": [
+            {
+              "type": "export_check",
+              "pattern": "export.*data|download.*personal",
+              "context": "data_export"
+            }
+          ],
+          "remediation": "Implement data export functionality in machine-readable format"
+        },
+        {
+          "id": "gdpr_004",
+          "name": "Privacy by Design",
+          "description": "Privacy must be built into systems by default",
+          "severity": "high",
+          "patterns": [
+            {
+              "type": "privacy_check",
+              "pattern": "default.*public|share.*by.*default",
+              "context": "privacy_violation"
+            }
+          ],
+          "remediation": "Implement privacy by design principles and default privacy settings"
+        }
+      ]
+    },
+    "DPDP": {
+      "name": "Digital Personal Data Protection Act",
+      "description": "India's data protection and privacy regulations",
+      "rules": [
+        {
+          "id": "dpdp_001",
+          "name": "Data Localization",
+          "description": "Personal data must be stored within India",
+          "severity": "critical",
+          "patterns": [
+            {
+              "type": "location_check",
+              "pattern": "cloud.*region.*outside|data.*center.*foreign",
+              "context": "data_localization"
+            }
+          ],
+          "remediation": "Ensure personal data is stored in India-based data centers"
+        },
+        {
+          "id": "dpdp_002",
+          "name": "Data Principal Rights",
+          "description": "Data principals have rights over their personal data",
+          "severity": "high",
+          "patterns": [
+            {
+              "type": "rights_check",
+              "pattern": "access.*personal.*data|correct.*data|delete.*data",
+              "context": "data_rights"
+            }
+          ],
+          "remediation": "Implement data principal rights management system"
+        },
+        {
+          "id": "dpdp_003",
+          "name": "Data Breach Notification",
+          "description": "Data breaches must be reported within 72 hours",
+          "severity": "critical",
+          "patterns": [
+            {
+              "type": "breach_check",
+              "pattern": "breach.*detection|security.*incident",
+              "context": "breach_notification"
+            }
+          ],
+          "remediation": "Implement automated breach detection and notification system"
+        },
+        {
+          "id": "dpdp_004",
+          "name": "Data Processing Purpose",
+          "description": "Data must be processed only for specified purposes",
+          "severity": "medium",
+          "patterns": [
+            {
+              "type": "purpose_check",
+              "pattern": "process.*for.*purpose|use.*data.*for",
+              "context": "purpose_limitation"
+            }
+          ],
+          "remediation": "Implement purpose limitation controls and monitoring"
+        }
+      ]
+    }
+  },
+  "common_violations": [
+    {
+      "id": "common_001",
+      "name": "Hardcoded Credentials",
+      "description": "Passwords, API keys, or other credentials hardcoded in source code",
+      "severity": "critical",
+      "patterns": [
+        {
+          "type": "regex",
+          "pattern": "(?:password|pwd|pass|secret|key|token)\\s*[:=]\\s*[\"']?[^\"'\\s]{6,}[\"']?",
+          "case_sensitive": false
+        }
+      ],
+      "frameworks": ["HIPAA", "GDPR", "DPDP"],
+      "remediation": "Use environment variables, secure configuration management, or secrets management systems"
+    },
+    {
+      "id": "common_002",
+      "name": "Unencrypted Sensitive Data",
+      "description": "Sensitive data stored or transmitted without encryption",
+      "severity": "high",
+      "patterns": [
+        {
+          "type": "contextual",
+          "pattern": "(?:store|save|transmit|send).*(?:password|ssn|credit|card|personal)",
+          "context": "unencrypted"
+        }
+      ],
+      "frameworks": ["HIPAA", "GDPR", "DPDP"],
+      "remediation": "Implement encryption for data at rest and in transit"
+    },
+    {
+      "id": "common_003",
+      "name": "SQL Injection Risk",
+      "description": "Potential SQL injection vulnerabilities",
+      "severity": "high",
+      "patterns": [
+        {
+          "type": "code_analysis",
+          "pattern": "execute.*\\+.*input|query.*\\+.*user",
+          "context": "sql_injection"
+        }
+      ],
+      "frameworks": ["HIPAA", "GDPR", "DPDP"],
+      "remediation": "Use parameterized queries or ORM frameworks"
+    },
+    {
+      "id": "common_004",
+      "name": "Missing Access Controls",
+      "description": "Lack of proper authentication and authorization",
+      "severity": "high",
+      "patterns": [
+        {
+          "type": "code_analysis",
+          "pattern": "public.*function|unprotected.*endpoint",
+          "context": "access_control"
+        }
+      ],
+      "frameworks": ["HIPAA", "GDPR", "DPDP"],
+      "remediation": "Implement proper authentication and authorization mechanisms"
+    },
+    {
+      "id": "common_005",
+      "name": "Insufficient Logging",
+      "description": "Lack of comprehensive audit logging",
+      "severity": "medium",
+      "patterns": [
+        {
+          "type": "code_analysis",
+          "pattern": "access.*data|modify.*data",
+          "context": "no_logging"
+        }
+      ],
+      "frameworks": ["HIPAA", "GDPR", "DPDP"],
+      "remediation": "Implement comprehensive audit logging for data access and modifications"
+    }
+  ],
+  "severity_levels": {
+    "critical": {
+      "score_impact": 40,
+      "description": "Immediate action required - high risk of compliance violation",
+      "response_time": "24 hours"
+    },
+    "high": {
+      "score_impact": 25,
+      "description": "High priority - significant compliance risk",
+      "response_time": "72 hours"
+    },
+    "medium": {
+      "score_impact": 15,
+      "description": "Medium priority - moderate compliance risk",
+      "response_time": "1 week"
+    },
+    "low": {
+      "score_impact": 5,
+      "description": "Low priority - minor compliance risk",
+      "response_time": "1 month"
+    }
+  },
+  "scoring": {
+    "base_score": 100,
+    "deduction_per_violation": true,
+    "bonus_for_compliance": 5,
+    "penalty_for_critical": 20
+  }
+}

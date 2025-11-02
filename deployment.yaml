@@ -1,0 +1,85 @@
+trigger:
+  branches:
+    include:
+      - none
+ 
+resources:
+  repositories:
+    - repository: Hackathon
+      type: git
+      name: Hackathon/vibecoding-team4
+      ref: main
+ 
+variables:
+- group: camp-acr-variables
+- name: VER
+  value: $(Build.BuildId)
+ 
+stages:
+- stage:
+  displayName: Build
+  pool: camp-dev
+  jobs:
+  - job: Build
+    steps:
+    - checkout: self
+      displayName: 'Checkout Code from Repo'
+ 
+    - task: Bash@3    
+      displayName: Build Docker Image
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Building the image"
+          docker login acrcampdev01.azurecr.io -u $(acrforuser) -p $(acrforpassword)
+          docker build -t acrcampdev01.azurecr.io/dev/compliance-ui:$(VER) .
+          docker push acrcampdev01.azurecr.io/dev/compliance-ui:$(VER)
+          docker images
+ 
+    - task: Bash@3
+      displayName: Delete Docker Image from Agent
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Cleaning up Docker images"
+          docker system prune -af
+      condition: always()
+ 
+- stage:
+  displayName: Deploy
+  pool: camp-dev
+  jobs:
+  - job: Deploy
+    steps:
+    - checkout: self
+ 
+    - task: Bash@3
+      displayName: Update image tag in deployment.yaml
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Injecting version into deployment manifest"
+          sed -i "s|#__#IMAGE_TAG#__#|$(VER)|g" deployment.yaml
+          cat deployment.yaml
+ 
+    - task: Kubernetes@1
+      displayName: Apply Deployment to AKS (camp-dev)
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'camp-dev'
+        namespace: 'bpmn-genai-dev'
+        command: apply
+        useConfigurationFile: true
+        configuration: 'deployment.yaml'
+ 
+docker
+ 
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ 
+ 
